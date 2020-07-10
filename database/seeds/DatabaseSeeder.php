@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-//use Illuminate\Support\Facades\Hash;
-use App\Role;
-//use App\User;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,10 +12,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-      DB::table('role_user')->turncate();
-
-      $admin= Role::where('name','admin')->first();
-      $trainer= Role::where('name','trainer')->first();
-      $member= Role::where('name','member')->first();
+      $this->call(RolesTableSeeder::class);
+//      $this->call(UsersTableSeeder::class);
     }
 }
