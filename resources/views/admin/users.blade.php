@@ -1,12 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+    <style>
+        .delete{
+            float: right;
+        }
+    </style>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Users</div>
-
+                    <div class="card-header">User
+                        <a href="{{url('/admin/user-members')}}" class="btn btn-primary btn-sm"
+                        role="button">View Members</a>
+                        <a href="{{url('/admin/user-trainer')}}" class="btn btn-warning btn-sm"
+                           role="button">View Trainer</a>
+                    </div>
                     <div class="card-body">
                           <table class="table">
                               <thead>
@@ -26,20 +35,20 @@
                                       <td>{{$user->email}}</td>
                                       <td>{{ implode('--',$user->roles()->get()->pluck('name')->toArray())}}</td>
                                       <td>
+                                          @can('editUsers')
                                           <a href="{{ route('users.edit', $user->id) }}">
                                           <button type="button" class="btn btn-primary">Edit</button></a>
-                                          <form >
-{{--                                              @csrf--}}
-{{--                                              {{ method_field('DELETE') }}--}}
-                                              <a href="{{ route('users.destroy', $user->id) }}">
-                                              <button type="button" class="btn btn-danger">Delete</button>
-                                              </a>
+                                          @endcan
+                                          <div class="delete">
+                                          <form  action="{{ route('users.destroy', $user) }}" method="GET" >
+                                              @csrf
+                                              {{ method_field('DELETE') }}
+                                              <button type="button" class="btn btn-danger" >Delete</button>
                                           </form>
+                                          </div>
                                       </td>
                                   </tr>
-
                               @endforeach
-
                               </tbody>
                           </table>
                     </div>

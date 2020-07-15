@@ -13,7 +13,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users_roles')->truncate();
+//        DB::table('users_roles')->truncate();
 
         $adminRole = Role::where('name','admin')->first();
         $trainerRole = Role::where('name','trainer')->first();
