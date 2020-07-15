@@ -5,10 +5,10 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Edit Member {{ $user->name }}</div>
+                    <div class="card-header">Edit Trainer</div>
 
                     <div class="card-body">
-                        <form action="{{ route('user-members.update', $user) }}" method="POST">
+                        <form action="{{ route('user-member.update', $user) }}" method="POST">
                             @csrf
                             {{ method_field('PUT') }}
                             @foreach($roles as $role)

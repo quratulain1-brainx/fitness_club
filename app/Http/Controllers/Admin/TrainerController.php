@@ -6,86 +6,56 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use App\Role;
+use Illuminate\Support\Facades\Gate;
 
 class TrainerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $user = User::whereHas('userRole' ,function ($query) {
             $query->where('role_id', '=', 2);
         })->get();
-//        return $user;
         return view('admin.viewTrainer')->with('userRole',$user);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        $trainer=User::all();
+        return view('admin.addTrainer',['trainer'=>$trainer]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $trainer = new User();
+        $trainer->name= $request->name;
+        $trainer->email= $request->email;
+        $trainer->save();
+        return redirect()->route('/admin/users',$trainer);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        if (Gate::denies('editTrainer')){
+            return redirect()->back()->with(['message'=>'Unregistered user']);
+        }
+        $roles = Role::all();
+        return view('admin.editTrainer')->with([
+            'roles'=> $roles
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $user->roles()->sync($request->roles);
+        return redirect()->route('user-trainer.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        if (Gate::denies('deleteTrainer')){
+            return redirect()->back()->with(['message'=>'Unregistered user']);
+        }
+        $user->delete();
+        return redirect()->route('user-trainer.index');
     }
 }
