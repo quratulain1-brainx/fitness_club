@@ -3,19 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\User;
-use App\Role;
-//use Illuminate\Auth\Access\Gate;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Role;
+use App\User;
+use Illuminate\Support\Facades\Gate;
 
-class UsersController extends Controller
+class MemberController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -23,10 +18,11 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $user = User::all();
-        return view('admin.users')->with('users',$user);
-
-
+        $user = User::whereHas('userRole' ,function ($query) {
+        $query->where('role_id', '=', 3);
+        })->get();
+//        return $user;
+        return view('admin.addMember')->with('userRole',$user);
     }
 
     /**
@@ -34,7 +30,11 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+    public function create()
+    {
+        $members=User::all();
+        return view('admin.newMember',['members'=>$members]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -42,53 +42,59 @@ class UsersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function store(Request $request)
+    {
 
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\User  $user
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit($id)
     {
         if (Gate::denies('editUsers')){
             return redirect()->back()->with(['message'=>'Unregistered user']);
         }
         $roles = Role::all();
-        return view('admin.edit')->with([
-            'user'=> $user,
+        return view('admin.editMember')->with([
             'roles'=> $roles
         ]);
-
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        $user->roles()->sync($request->roles);
-        return redirect()->route('users.index');
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\User  $user
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        if (Gate::denies('deleteUsers')){
-            return redirect()->back()->with(['message'=>'Unregistered user']);
-        }
-        $user->roles()->detach();
-        $user->delete();
-        return redirect()->route('users.index');
+        //
     }
 }

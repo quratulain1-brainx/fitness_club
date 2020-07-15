@@ -61,10 +61,11 @@
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
+                                    @can('manageUsers')
                                     <a class="dropdown-item" href="{{ route('users.index') }}">
                                         Users
                                     </a>
-
+                                    @endcan
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>
